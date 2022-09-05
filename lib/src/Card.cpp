@@ -22,19 +22,19 @@ unsigned int Card::getScore(CardSuit tableColor) {
     return 3;
   }
 
-  if (suit == CardSuit::black) {
+  if (suit == black) {
     return 4;
   }
 
-  if (suit == CardSuit::mermaid) {
+  if (suit == mermaid) {
     return 5;
   }
 
-  if (suit == CardSuit::pirate) {
+  if (suit == pirate) {
     return 6;
   }
 
-  if (suit == CardSuit::king) {
+  if (suit == king) {
     return 7;
   }
 }

@@ -8,19 +8,15 @@ class Game {
 private:
   unsigned short round = 0;
   std::vector<Player *> players;
-  std::vector<Card *> deck;
-  std::vector<std::pair<Card *, Player *>> table;
-  std::map<Player *, unsigned int> score;
-
-  void createShuffledDeck();
-  Card *dealCard();
-
-  Card *getWinningCard(Card *beforeCard, Card *afterCard, CardSuit tableColor);
 
 public:
-  Game();
-  void addPlayer(Player *player);
-  void startNewRound();
-  void addCardToTable(Card *card, Player *player);
-  std::pair<Card *, Player *> determineWinner();
+  Game(std::vector<Player *> _players);
+  Card *dealCardFromDeck(std::vector<Card *> deck);
+  Card *getWinningCard(Card *beforeCard, Card *afterCard, CardSuit tableColor);
+  std::vector<Card *> createShuffledDeck();
+  std::vector<std::pair<Player *, Card *>> startNewRound();
+  void addCardToTable(std::vector<std::pair<Player *, Card *>> table,
+                      Card *card, Player *player);
+  std::pair<Player *, Card *>
+  determineTableWinner(std::vector<std::pair<Player *, Card *>> table);
 };

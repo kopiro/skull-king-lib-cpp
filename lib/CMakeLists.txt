@@ -17,5 +17,5 @@ set_target_properties(SkullKingLib PROPERTIES PUBLIC_HEADER include/SkullKingLib
 # PUBLIC needed to make both hello.h and hello library available elsewhere in project
 target_include_directories(SkullKingLib PUBLIC include)
 
-# Tell compiler to use C++20 features. The code doesn't actually use any of them.
+# Tell compiler to use C++17 features. The code doesn't actually use any of them.
 target_compile_features(SkullKingLib PUBLIC cxx_std_17)
