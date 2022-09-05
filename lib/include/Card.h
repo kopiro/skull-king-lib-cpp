@@ -1,16 +1,17 @@
 #pragma once
 
 enum CardSuit {
+  UNKNOWN,
+  whiteflag,
   green,
   red,
   blue,
-  black,
   yellow,
-  pirate,
+  black,
   mermaid,
+  pirate,
+  pirateOrWhiteflag,
   king,
-  whiteflag,
-  pirateOrWhiteflag
 };
 
 enum CardValue {
@@ -37,6 +38,8 @@ private:
 
 public:
   Card(CardSuit _suit, CardValue _value);
-  bool operator<(Card &other);
-  unsigned short getScore();
+  CardSuit getSuit();
+  CardValue getValue();
+  bool isColorCard(bool includeBlack);
+  unsigned int getScore(CardSuit tableColor);
 };
