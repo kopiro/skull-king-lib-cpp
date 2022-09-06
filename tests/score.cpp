@@ -101,10 +101,10 @@ TEST(SkullKingScore, TestRound2) {
                       2); // (actual = 2, so +40 +(30 for pirate))
 
   r2->startNewTable();
-  r2->playCardFromPlayer(game->players[0], r1p0GreenTwo);
   r2->playCardFromPlayer(game->players[1], r1p1GreenThree);
-  r2->playCardFromPlayer(game->players[2],
-                         r1p2King0); // winner, no extra points
+  r2->playCardFromPlayer(game->players[2], r1p2King0);
+  r2->playCardFromPlayer(game->players[0],
+                         r1p0GreenTwo); // winner, no extra points
   r2->closeTable();
 
   r2->startNewTable();

@@ -9,7 +9,8 @@ class Round {
 private:
 public:
   Round(unsigned short _cardCount, std::vector<Player *> _players,
-        std::map<Player *, short> _gameScore);
+        std::map<Player *, short> _gameScore,
+        unsigned short _startingPlayerIndex);
 
   std::vector<Player *> players;
   std::vector<std::pair<Player *, Card *>> table;
@@ -19,7 +20,7 @@ public:
   std::map<Player *, unsigned short> tableVictories;
   std::map<Player *, unsigned short> additionalTablesScore;
 
-  Player *lastTableWinner;
+  Player *nextPlayingPlayer;
 
   unsigned short cardCount;
   unsigned short tableIndex = 0;

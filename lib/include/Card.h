@@ -42,8 +42,8 @@ enum CardValue {
 class Card {
 public:
   Card(CardSuit _suit, CardValue _value);
-  const CardSuit suit;
-  const CardValue value;
+  CardSuit suit;
+  CardValue value;
 
   bool isColorCard(bool includeBlack);
   unsigned short getRank(CardSuit tableColor);

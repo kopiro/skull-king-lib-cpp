@@ -8,12 +8,12 @@
 class Game {
 private:
 public:
-  Round *currentRound;
+  Round *currentRound = NULL;
   std::vector<Player *> players;
   std::map<Player *, short> gameScore;
+  unsigned short startingRoundPlayerIndex = 0;
 
   Game(std::vector<Player *> _players);
-  Round *startNewRound();
-  Round *startRoundNumber(unsigned short cardCount);
+  void startNewRound();
   void closeRound();
 };

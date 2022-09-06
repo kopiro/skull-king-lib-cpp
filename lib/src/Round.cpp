@@ -16,14 +16,17 @@ static const unsigned short kPirateOrWhiteflagCount = 1;
 static const CardSuit suits[] = {green, blue, red, yellow, black};
 
 Round::Round(unsigned short _cardCount, std::vector<Player *> _players,
-             std::map<Player *, short> _gameScore)
+             std::map<Player *, short> _gameScore,
+             unsigned short _startingRoundPlayerIndex)
     : cardCount(_cardCount), players(_players), gameScore(_gameScore) {
-  this->deck = this->createShuffledDeck();
+  deck = createShuffledDeck();
 
-  for (const auto player : this->players) {
-    this->tableVictories[player] = 0;
-    this->additionalTablesScore[player] = 0;
+  for (const auto player : players) {
+    tableVictories[player] = 0;
+    additionalTablesScore[player] = 0;
   }
+
+  nextPlayingPlayer = players.at(_startingRoundPlayerIndex);
 }
 
 std::vector<Card *> Round::createShuffledDeck() {
@@ -58,25 +61,32 @@ std::vector<Card *> Round::createShuffledDeck() {
 }
 
 void Round::setBetForPlayer(Player *player, unsigned short bet) {
-  if (bet > this->cardCount) {
+  if (bet > cardCount) {
     throw std::invalid_argument("Bet can't be more than cardCount");
   }
-  this->playerBets[player] = bet;
+  playerBets[player] = bet;
 }
 
 void Round::playCardFromPlayer(Player *player, Card *card) {
-  if (this->lastTableWinner != NULL && this->lastTableWinner != player) {
-    throw std::logic_error("Last table winner is not starting the new table");
+  if (nextPlayingPlayer != player) {
+    throw std::logic_error("Order of players playing has not been respected");
   }
-  this->lastTableWinner = NULL;
+
+  auto playerIt = std::find(players.begin(), players.end(), nextPlayingPlayer);
+  if (playerIt == players.end()) {
+    throw std::logic_error("Can't find this player in the list of all players");
+  }
 
   player->removeCardFromHand(card);
-  this->table.push_back(std::make_pair(player, card));
+  table.push_back(std::make_pair(player, card));
+
+  nextPlayingPlayer =
+      players.at((playerIt - players.begin() + 1) % players.size());
 }
 
 Card *Round::dealCardFromDeck() {
-  Card *card = this->deck.back();
-  this->deck.pop_back();
+  Card *card = deck.back();
+  deck.pop_back();
   return card;
 }
 
@@ -154,7 +164,7 @@ std::pair<Player *, unsigned short> Round::determineTableWinner() {
 
   std::unordered_map<Card *, Player *> cardToPlayerMap;
 
-  for (auto const &[player, card] : this->table) {
+  for (auto const &[player, card] : table) {
     cardToPlayerMap[card] = player;
 
     // Determine the color of the table by getting the first color appearing
@@ -166,8 +176,8 @@ std::pair<Player *, unsigned short> Round::determineTableWinner() {
       maybeMermaidOnTable = card;
     }
 
-    auto newWinningCard = this->getWinningCard(winningCard, card, tableColor,
-                                               maybeMermaidOnTable);
+    auto newWinningCard =
+        getWinningCard(winningCard, card, tableColor, maybeMermaidOnTable);
 
     if (newWinningCard.first != winningCard) {
       // Reset points if the winning card changed
@@ -183,33 +193,34 @@ std::pair<Player *, unsigned short> Round::determineTableWinner() {
 }
 
 void Round::clearPlayerHands() {
-  for (const auto player : this->players) {
+  for (const auto player : players) {
     player->clearHand();
   }
 }
 
 void Round::closeTable() {
-  auto winningPlayer = this->determineTableWinner();
-  this->lastTableWinner = winningPlayer.first;
-  this->tableVictories[winningPlayer.first]++;
-  this->additionalTablesScore[winningPlayer.first] += winningPlayer.second;
+  auto winningPlayer = determineTableWinner();
+  // Next playing player is the winner of this table
+  nextPlayingPlayer = winningPlayer.first;
+  tableVictories[winningPlayer.first]++;
+  additionalTablesScore[winningPlayer.first] += winningPlayer.second;
 }
 
 void Round::dealCardsToPlayers() {
-  for (const auto player : this->players) {
-    for (auto i = 0; i < this->cardCount; i++) {
-      player->addCardToHand(this->dealCardFromDeck());
+  for (const auto player : players) {
+    for (auto i = 0; i < cardCount; i++) {
+      player->addCardToHand(dealCardFromDeck());
     }
   }
 }
 
 void Round::startNewTable() {
-  if (this->tableIndex == this->cardCount) {
+  if (tableIndex == cardCount) {
     throw std::logic_error("Calling startNewTable without enough cardCount");
   }
 
-  this->tableIndex++;
-  this->table.clear();
+  tableIndex++;
+  table.clear();
 }
 
 void Round::dealCardToPlayer(Player *player, Card *card) {
@@ -217,32 +228,31 @@ void Round::dealCardToPlayer(Player *player, Card *card) {
 }
 
 std::map<Player *, short> Round::closeRound() {
-  if (this->tableIndex != this->cardCount) {
+  if (tableIndex != cardCount) {
     throw std::logic_error("Calling closeRound too soon");
   }
 
-  for (const auto player : this->players) {
-    const auto playerBet = this->playerBets[player];
-    const auto tableVictories = this->tableVictories[player];
+  for (const auto player : players) {
+    const auto playerBet = playerBets[player];
+    const auto tableVictory = tableVictories[player];
 
     if (playerBet == 0) {
       // Lose all
-      if (tableVictories == 0) {
-        this->gameScore[player] += 10 * this->cardCount;
+      if (tableVictory == 0) {
+        gameScore[player] += 10 * cardCount;
       } else {
-        this->gameScore[player] -= 10 * this->cardCount;
+        gameScore[player] -= 10 * cardCount;
       }
     } else {
       // Win something
-      const auto diff = abs(tableVictories - playerBet);
+      const auto diff = abs(tableVictory - playerBet);
       if (diff == 0) {
-        this->gameScore[player] +=
-            (20 * playerBet) + this->additionalTablesScore[player];
+        gameScore[player] += (20 * playerBet) + additionalTablesScore[player];
       } else {
-        this->gameScore[player] -= 10 * diff;
+        gameScore[player] -= 10 * diff;
       }
     }
   }
 
-  return this->gameScore;
+  return gameScore;
 }

@@ -8,19 +8,18 @@
 #include <vector>
 
 Game::Game(std::vector<Player *> _players) : players(_players) {
-  for (const auto player : this->players) {
-    this->gameScore[player] = 0;
+  for (const auto player : players) {
+    gameScore[player] = 0;
   }
-  this->currentRound = new Round(0, players, this->gameScore);
 }
 
-Round *Game::startNewRound() {
-  return this->startRoundNumber(this->currentRound->cardCount + 1);
+void Game::startNewRound() {
+  currentRound =
+      new Round(currentRound == NULL ? 1 : currentRound->cardCount + 1, players,
+                gameScore, startingRoundPlayerIndex);
 }
 
-Round *Game::startRoundNumber(unsigned short cardCount) {
-  this->currentRound = new Round(cardCount, this->players, this->gameScore);
-  return this->currentRound;
+void Game::closeRound() {
+  gameScore = currentRound->closeRound();
+  startingRoundPlayerIndex = (startingRoundPlayerIndex + 1) % players.size();
 }
-
-void Game::closeRound() { this->gameScore = this->currentRound->closeRound(); }
