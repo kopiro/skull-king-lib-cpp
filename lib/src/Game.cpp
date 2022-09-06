@@ -11,16 +11,16 @@ Game::Game(std::vector<Player *> _players) : players(_players) {
   for (const auto player : this->players) {
     this->gameScore[player] = 0;
   }
-  this->round = new Round(0, players, this->gameScore);
+  this->currentRound = new Round(0, players, this->gameScore);
 }
 
 Round *Game::startNewRound() {
-  return this->startRoundNumber(this->round->cardCount + 1);
+  return this->startRoundNumber(this->currentRound->cardCount + 1);
 }
 
 Round *Game::startRoundNumber(unsigned short cardCount) {
-  this->round = new Round(cardCount, this->players, this->gameScore);
-  return this->round;
+  this->currentRound = new Round(cardCount, this->players, this->gameScore);
+  return this->currentRound;
 }
 
-void Game::closeRound() { this->gameScore = this->round->closeRound(); }
+void Game::closeRound() { this->gameScore = this->currentRound->closeRound(); }

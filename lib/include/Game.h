@@ -8,7 +8,7 @@
 class Game {
 private:
 public:
-  Round *round;
+  Round *currentRound;
   std::vector<Player *> players;
   std::map<Player *, short> gameScore;
 

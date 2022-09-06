@@ -7,24 +7,25 @@
 
 class Round {
 private:
-  std::vector<Player *> players;
-  std::vector<std::pair<Player *, Card *>> table;
-  std::map<Player *, unsigned short> playerBets;
-  std::map<Player *, unsigned short> tablesWins;
-  std::map<Player *, unsigned short> additionalTablesScore;
-  std::map<Player *, short> gameScore;
-
 public:
   Round(unsigned short _cardCount, std::vector<Player *> _players,
         std::map<Player *, short> _gameScore);
 
+  std::vector<Player *> players;
+  std::vector<std::pair<Player *, Card *>> table;
+  std::map<Player *, unsigned short> playerBets;
+  std::map<Player *, short> gameScore;
   std::vector<Card *> deck;
+  std::map<Player *, unsigned short> tableVictories;
+  std::map<Player *, unsigned short> additionalTablesScore;
 
   unsigned short cardCount;
   unsigned short tableCount = 0;
 
   void setBetForPlayer(Player *player, unsigned short bet);
-  void addCardToTable(Player *player, Card *card);
+  void playCardFromPlayer(Player *player, Card *card);
+  void dealCardToPlayer(Player *player, Card *card);
+  void clearPlayerHands();
 
   std::pair<Card *, unsigned short> getWinningCard(Card *beforeCard,
                                                    Card *afterCard,
@@ -36,9 +37,9 @@ public:
   void dealCards();
 
   std::pair<Player *, unsigned short> determineTableWinner();
-  void closeTable();
 
   void startNewTable();
+  void closeTable();
 
   std::map<Player *, short> closeRound();
 };

@@ -11,11 +11,10 @@ const unsigned short suitModulo = 10;
 enum CardSuit {
   UNKNOWN = -1,
   whiteflag = suitModulo * 1,
-  green = suitModulo * 2,
-  red = suitModulo * 2 + 1,
-  blue = suitModulo * 1 + 2,
-  yellow = suitModulo * 1 + 3,
-  // <-- color with same table color -->
+  green = (suitModulo * 2 + 1),
+  red = (suitModulo * 2) + 2,
+  blue = (suitModulo * 2) + 3,
+  yellow = (suitModulo * 2) + 4,
   black = suitModulo * 5,
   mermaid = suitModulo * 6,
   pirate = suitModulo * 7,
@@ -47,5 +46,5 @@ public:
   const CardValue value;
 
   bool isColorCard(bool includeBlack);
-  unsigned short getScore(CardSuit tableColor);
+  unsigned short getRank(CardSuit tableColor);
 };

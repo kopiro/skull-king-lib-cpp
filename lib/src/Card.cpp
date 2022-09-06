@@ -12,7 +12,7 @@ bool Card::isColorCard(bool includeBlack) {
   return suit == green || suit == red || suit == blue || suit == yellow;
 }
 
-unsigned short Card::getScore(CardSuit tableColor) {
+unsigned short Card::getRank(CardSuit tableColor) {
   const unsigned short addScore = suit == tableColor ? suitModulo : 0;
   return std::floor((suit + addScore) / suitModulo);
 }

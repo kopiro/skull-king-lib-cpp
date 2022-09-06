@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Card.h"
+
 #include <string>
 #include <vector>
 
@@ -12,4 +13,5 @@ public:
   Player(std::string name);
   void addCardToHand(Card *card);
   void clearHand();
+  void removeCardFromHand(Card *card);
 };

@@ -21,7 +21,7 @@ Round::Round(unsigned short _cardCount, std::vector<Player *> _players,
   this->deck = this->createShuffledDeck();
 
   for (const auto player : this->players) {
-    this->tablesWins[player] = 0;
+    this->tableVictories[player] = 0;
     this->additionalTablesScore[player] = 0;
   }
 }
@@ -64,7 +64,8 @@ void Round::setBetForPlayer(Player *player, unsigned short bet) {
   this->playerBets[player] = bet;
 }
 
-void Round::addCardToTable(Player *player, Card *card) {
+void Round::playCardFromPlayer(Player *player, Card *card) {
+  player->removeCardFromHand(card);
   this->table.push_back(std::make_pair(player, card));
 }
 
@@ -103,8 +104,8 @@ Round::getWinningCard(Card *beforeCard, Card *afterCard, CardSuit tableColor,
 
   // In all other cases, we get a score based on current-color and compare that
   // This will clearly determine the winning card.. unless score is the same
-  unsigned int beforeCardScore = beforeCard->getScore(tableColor);
-  unsigned int afterCardScore = afterCard->getScore(tableColor);
+  unsigned int beforeCardScore = beforeCard->getRank(tableColor);
+  unsigned int afterCardScore = afterCard->getRank(tableColor);
   if (beforeCardScore > afterCardScore)
     return std::make_pair(beforeCard, 0);
   if (beforeCardScore < afterCardScore)
@@ -140,12 +141,16 @@ std::pair<Player *, unsigned short> Round::determineTableWinner() {
   Card *winningCard = NULL;
   unsigned short additionalPoints = 0;
 
+  // Oh gosh - the mermaid could be not the winning card in the loop ('cause
+  // it's been defeated by a pirate before), so we need to keep a reference to
+  // first mermaid encoutered in the table so we can always make the battle
+  // between KING and MERMAID and proclaim the mermaid as the winner
   Card *maybeMermaidOnTable = NULL;
 
-  std::unordered_map<Card *, Player *> cardToPlayer;
+  std::unordered_map<Card *, Player *> cardToPlayerMap;
 
   for (auto const &[player, card] : this->table) {
-    cardToPlayer[card] = player;
+    cardToPlayerMap[card] = player;
 
     // Determine the color of the table by getting the first color appearing
     if (tableColor == UNKNOWN && card->isColorCard(true)) {
@@ -169,12 +174,18 @@ std::pair<Player *, unsigned short> Round::determineTableWinner() {
     additionalPoints += newWinningCard.second;
   }
 
-  return std::make_pair(cardToPlayer[winningCard], additionalPoints);
+  return std::make_pair(cardToPlayerMap[winningCard], additionalPoints);
+}
+
+void Round::clearPlayerHands() {
+  for (const auto player : this->players) {
+    player->clearHand();
+  }
 }
 
 void Round::closeTable() {
   auto winningPlayer = this->determineTableWinner();
-  this->tablesWins[winningPlayer.first]++;
+  this->tableVictories[winningPlayer.first]++;
   this->additionalTablesScore[winningPlayer.first] += winningPlayer.second;
 }
 
@@ -191,6 +202,10 @@ void Round::startNewTable() {
   this->table.clear();
 }
 
+void Round::dealCardToPlayer(Player *player, Card *card) {
+  player->addCardToHand(card);
+}
+
 std::map<Player *, short> Round::closeRound() {
   if (this->tableCount != this->cardCount) {
     throw std::logic_error("Round is not finished yet to calculate bets score");
@@ -198,18 +213,18 @@ std::map<Player *, short> Round::closeRound() {
 
   for (const auto player : this->players) {
     const auto playerBet = this->playerBets[player];
-    const auto tablesWins = this->tablesWins[player];
+    const auto tableVictories = this->tableVictories[player];
 
     if (playerBet == 0) {
       // Lose all
-      if (tablesWins == 0) {
+      if (tableVictories == 0) {
         this->gameScore[player] += 10 * this->cardCount;
       } else {
         this->gameScore[player] -= 10 * this->cardCount;
       }
     } else {
       // Win something
-      const auto diff = abs(tablesWins - playerBet);
+      const auto diff = abs(tableVictories - playerBet);
       if (diff == 0) {
         this->gameScore[player] +=
             (20 * playerBet) + this->additionalTablesScore[player];
