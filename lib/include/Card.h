@@ -1,7 +1,7 @@
 #pragma once
 
 enum CardSuit {
-  UNKNOWN,
+  UNKNOWN = 0,
   whiteflag,
   green,
   red,
@@ -15,7 +15,7 @@ enum CardSuit {
 };
 
 enum CardValue {
-  special = 0,
+  SPECIAL = 0,
   one = 1,
   two = 2,
   three = 3,
@@ -32,14 +32,11 @@ enum CardValue {
 };
 
 class Card {
-private:
-  CardSuit suit;
-  CardValue value;
-
 public:
   Card(CardSuit _suit, CardValue _value);
-  CardSuit getSuit();
-  CardValue getValue();
+  const CardSuit suit;
+  const CardValue value;
+
   bool isColorCard(bool includeBlack);
   unsigned int getScore(CardSuit tableColor);
 };

@@ -5,12 +5,11 @@
 #include <vector>
 
 class Player {
-private:
-  std::vector<Card *> hand;
-  std::string name;
-
 public:
+  std::string name;
+  std::vector<Card *> hand;
+
   Player(std::string name);
   void addCardToHand(Card *card);
-  void resetHand();
+  void clearHand();
 };

@@ -1,40 +1,36 @@
 #include "Card.h"
+#include <cassert>
 
 Card::Card(CardSuit _suit, CardValue _value) : suit(_suit), value(_value) {}
 
 bool Card::isColorCard(bool includeBlack) {
-  return suit == green || suit == red || blue == suit || yellow;
+  if (includeBlack && suit == black)
+    return true;
+  return suit == green || suit == red || suit == blue || suit == yellow;
 }
 
-CardSuit Card::getSuit() { return suit; }
-CardValue Card::getValue() { return value; }
-
 unsigned int Card::getScore(CardSuit tableColor) {
-  if (suit == whiteflag) {
+  if (suit == whiteflag)
     return 1;
-  }
 
-  if (isColorCard(false) && suit != tableColor) {
+  if (isColorCard(false) && suit != tableColor)
     return 2;
-  }
 
-  if (isColorCard(false) && suit == tableColor) {
+  if (isColorCard(false) && suit == tableColor)
     return 3;
-  }
 
-  if (suit == black) {
+  if (suit == black)
     return 4;
-  }
 
-  if (suit == mermaid) {
+  if (suit == mermaid)
     return 5;
-  }
 
-  if (suit == pirate) {
+  if (suit == pirate)
     return 6;
-  }
 
-  if (suit == king) {
+  if (suit == king)
     return 7;
-  }
+
+  assert("Score can't be determined");
+  return 0;
 }

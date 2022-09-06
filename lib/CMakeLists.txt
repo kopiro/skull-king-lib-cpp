@@ -7,7 +7,7 @@ project(
     VERSION 0.1
     DESCRIPTION "Skull King game library")
 
-add_library(SkullKingLib src/SkullKingLib.cpp src/Game.cpp src/Card.cpp src/Player.cpp)
+add_library(SkullKingLib src/SkullKingLib.cpp src/Game.cpp src/Card.cpp src/Player.cpp src/Round.cpp)
 set(BUILD_SHARED_LIBS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS True)
 
