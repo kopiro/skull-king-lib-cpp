@@ -19,8 +19,10 @@ public:
   std::map<Player *, unsigned short> tableVictories;
   std::map<Player *, unsigned short> additionalTablesScore;
 
+  Player *lastTableWinner;
+
   unsigned short cardCount;
-  unsigned short tableCount = 0;
+  unsigned short tableIndex = 0;
 
   void setBetForPlayer(Player *player, unsigned short bet);
   void playCardFromPlayer(Player *player, Card *card);
@@ -34,7 +36,7 @@ public:
 
   std::vector<Card *> createShuffledDeck();
   Card *dealCardFromDeck();
-  void dealCards();
+  void dealCardsToPlayers();
 
   std::pair<Player *, unsigned short> determineTableWinner();
 

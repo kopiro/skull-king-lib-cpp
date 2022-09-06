@@ -65,6 +65,11 @@ void Round::setBetForPlayer(Player *player, unsigned short bet) {
 }
 
 void Round::playCardFromPlayer(Player *player, Card *card) {
+  if (this->lastTableWinner != NULL && this->lastTableWinner != player) {
+    throw std::logic_error("Last table winner is not starting the new table");
+  }
+  this->lastTableWinner = NULL;
+
   player->removeCardFromHand(card);
   this->table.push_back(std::make_pair(player, card));
 }
@@ -185,11 +190,12 @@ void Round::clearPlayerHands() {
 
 void Round::closeTable() {
   auto winningPlayer = this->determineTableWinner();
+  this->lastTableWinner = winningPlayer.first;
   this->tableVictories[winningPlayer.first]++;
   this->additionalTablesScore[winningPlayer.first] += winningPlayer.second;
 }
 
-void Round::dealCards() {
+void Round::dealCardsToPlayers() {
   for (const auto player : this->players) {
     for (auto i = 0; i < this->cardCount; i++) {
       player->addCardToHand(this->dealCardFromDeck());
@@ -198,7 +204,11 @@ void Round::dealCards() {
 }
 
 void Round::startNewTable() {
-  this->tableCount++;
+  if (this->tableIndex == this->cardCount) {
+    throw std::logic_error("Calling startNewTable without enough cardCount");
+  }
+
+  this->tableIndex++;
   this->table.clear();
 }
 
@@ -207,8 +217,8 @@ void Round::dealCardToPlayer(Player *player, Card *card) {
 }
 
 std::map<Player *, short> Round::closeRound() {
-  if (this->tableCount != this->cardCount) {
-    throw std::logic_error("Round is not finished yet to calculate bets score");
+  if (this->tableIndex != this->cardCount) {
+    throw std::logic_error("Calling closeRound too soon");
   }
 
   for (const auto player : this->players) {
