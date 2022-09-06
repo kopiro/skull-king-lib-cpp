@@ -15,7 +15,12 @@ Game::Game(std::vector<Player *> _players) : players(_players) {
 }
 
 Round *Game::startNewRound() {
-  this->round =
-      new Round(this->round->cardCount + 1, this->players, this->gameScore);
+  return this->startRoundNumber(this->round->cardCount + 1);
+}
+
+Round *Game::startRoundNumber(unsigned short cardCount) {
+  this->round = new Round(cardCount, this->players, this->gameScore);
   return this->round;
 }
+
+void Game::closeRound() { this->gameScore = this->round->closeRound(); }

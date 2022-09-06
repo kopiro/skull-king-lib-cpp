@@ -14,4 +14,6 @@ public:
 
   Game(std::vector<Player *> _players);
   Round *startNewRound();
+  Round *startRoundNumber(unsigned short cardCount);
+  void closeRound();
 };

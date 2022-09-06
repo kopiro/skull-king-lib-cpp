@@ -1,21 +1,30 @@
 #pragma once
 
+#include <assert.h>
+
+const unsigned short suitModulo = 10;
+
+// The suit represents also the power of the card
+// Since colors all are graded the same, we keep a distance of "10"
+// between each suit, so that by floor(suit/10) we can still get the proper
+// value
 enum CardSuit {
-  UNKNOWN = 0,
-  whiteflag,
-  green,
-  red,
-  blue,
-  yellow,
-  black,
-  mermaid,
-  pirate,
-  pirateOrWhiteflag,
-  king,
+  UNKNOWN = -1,
+  whiteflag = suitModulo * 1,
+  green = suitModulo * 2,
+  red = suitModulo * 2 + 1,
+  blue = suitModulo * 1 + 2,
+  yellow = suitModulo * 1 + 3,
+  // <-- color with same table color -->
+  black = suitModulo * 5,
+  mermaid = suitModulo * 6,
+  pirate = suitModulo * 7,
+  king = suitModulo * 8,
 };
 
 enum CardValue {
-  SPECIAL = 0,
+  SPECIAL = -1,
+  PIRATE_OR_WHITE_FLAG = -2,
   one = 1,
   two = 2,
   three = 3,
@@ -38,5 +47,5 @@ public:
   const CardValue value;
 
   bool isColorCard(bool includeBlack);
-  unsigned int getScore(CardSuit tableColor);
+  unsigned short getScore(CardSuit tableColor);
 };

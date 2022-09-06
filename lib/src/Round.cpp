@@ -48,7 +48,7 @@ std::vector<Card *> Round::createShuffledDeck() {
     deck.push_back(new Card(mermaid, SPECIAL));
   }
   for (unsigned short count = 0; count < kKingCount; count++) {
-    deck.push_back(new Card(pirateOrWhiteflag, SPECIAL));
+    deck.push_back(new Card(UNKNOWN, PIRATE_OR_WHITE_FLAG));
   }
 
   auto rng = std::default_random_engine{};
@@ -172,7 +172,7 @@ std::pair<Player *, unsigned short> Round::determineTableWinner() {
   return std::make_pair(cardToPlayer[winningCard], additionalPoints);
 }
 
-void Round::incrementTableWins() {
+void Round::closeTable() {
   auto winningPlayer = this->determineTableWinner();
   this->tablesWins[winningPlayer.first]++;
   this->additionalTablesScore[winningPlayer.first] += winningPlayer.second;
@@ -191,7 +191,7 @@ void Round::startNewTable() {
   this->table.clear();
 }
 
-std::map<Player *, short> Round::determineNewGameScore() {
+std::map<Player *, short> Round::closeRound() {
   if (this->tableCount != this->cardCount) {
     throw std::logic_error("Round is not finished yet to calculate bets score");
   }
@@ -203,9 +203,9 @@ std::map<Player *, short> Round::determineNewGameScore() {
     if (playerBet == 0) {
       // Lose all
       if (tablesWins == 0) {
-        this->gameScore[player] += this->cardCount;
+        this->gameScore[player] += 10 * this->cardCount;
       } else {
-        this->gameScore[player] -= this->cardCount;
+        this->gameScore[player] -= 10 * this->cardCount;
       }
     } else {
       // Win something

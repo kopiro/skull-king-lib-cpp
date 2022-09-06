@@ -1,7 +1,10 @@
 #include "Card.h"
 #include <cassert>
+#include <cmath>
 
-Card::Card(CardSuit _suit, CardValue _value) : suit(_suit), value(_value) {}
+Card::Card(CardSuit _suit, CardValue _value) : suit(_suit), value(_value) {
+  assert(black - yellow - suitModulo > suitModulo);
+}
 
 bool Card::isColorCard(bool includeBlack) {
   if (includeBlack && suit == black)
@@ -9,28 +12,7 @@ bool Card::isColorCard(bool includeBlack) {
   return suit == green || suit == red || suit == blue || suit == yellow;
 }
 
-unsigned int Card::getScore(CardSuit tableColor) {
-  if (suit == whiteflag)
-    return 1;
-
-  if (isColorCard(false) && suit != tableColor)
-    return 2;
-
-  if (isColorCard(false) && suit == tableColor)
-    return 3;
-
-  if (suit == black)
-    return 4;
-
-  if (suit == mermaid)
-    return 5;
-
-  if (suit == pirate)
-    return 6;
-
-  if (suit == king)
-    return 7;
-
-  assert("Score can't be determined");
-  return 0;
+unsigned short Card::getScore(CardSuit tableColor) {
+  const unsigned short addScore = suit == tableColor ? suitModulo : 0;
+  return std::floor((suit + addScore) / suitModulo);
 }

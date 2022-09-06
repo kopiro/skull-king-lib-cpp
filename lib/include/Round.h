@@ -36,9 +36,9 @@ public:
   void dealCards();
 
   std::pair<Player *, unsigned short> determineTableWinner();
-  void incrementTableWins();
+  void closeTable();
 
   void startNewTable();
 
-  std::map<Player *, short> determineNewGameScore();
+  std::map<Player *, short> closeRound();
 };
