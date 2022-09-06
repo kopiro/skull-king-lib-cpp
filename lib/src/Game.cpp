@@ -11,11 +11,10 @@ Game::Game(std::vector<Player *> _players) : players(_players) {}
 static const unsigned short kColorCardCount = 13;
 static const unsigned short kPirateCount = 5;
 static const unsigned short kMermaidCount = 2;
-static const unsigned short kKingCount = 2;
+static const unsigned short kKingCount = 1;
 static const unsigned short kWhiteflagCount = 5;
 static const unsigned short kPirateOrWhiteflagCount = 1;
-static const CardSuit suits[] = {CardSuit::green, CardSuit::blue, CardSuit::red,
-                                 CardSuit::yellow, CardSuit::black};
+static const CardSuit suits[] = {green, blue, red, yellow, black};
 
 std::vector<Card *> Game::createShuffledDeck() {
   std::vector<Card *> deck;
@@ -27,19 +26,19 @@ std::vector<Card *> Game::createShuffledDeck() {
     }
   }
   for (unsigned short count = 0; count < kWhiteflagCount; count++) {
-    deck.push_back(new Card(whiteflag, CardValue::special));
+    deck.push_back(new Card(whiteflag, special));
   }
   for (unsigned short count = 0; count < kPirateCount; count++) {
-    deck.push_back(new Card(pirate, CardValue::special));
+    deck.push_back(new Card(pirate, special));
   }
   for (unsigned short count = 0; count < kMermaidCount; count++) {
-    deck.push_back(new Card(mermaid, CardValue::special));
+    deck.push_back(new Card(mermaid, special));
   }
   for (unsigned short count = 0; count < kKingCount; count++) {
-    deck.push_back(new Card(mermaid, CardValue::special));
+    deck.push_back(new Card(mermaid, special));
   }
   for (unsigned short count = 0; count < kKingCount; count++) {
-    deck.push_back(new Card(pirateOrWhiteflag, CardValue::special));
+    deck.push_back(new Card(pirateOrWhiteflag, special));
   }
 
   auto rng = std::default_random_engine{};
